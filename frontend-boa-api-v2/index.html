@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BOA Reclamos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">BO</div>
+        <div>
+          <span class="eyebrow">BOA</span>
+          <strong>Operaciones</strong>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Navegación principal">
+        <button class="nav-link is-active" data-section="dashboard">Resumen</button>
+        <button class="nav-link" data-section="reclamos">Reclamos</button>
+        <button class="nav-link" data-section="clientes">Clientes y equipajes</button>
+        <button class="nav-link" data-section="vuelos">Vuelos</button>
+        <button class="nav-link" data-section="pilotos">Pilotos</button>
+        <button class="nav-link" data-section="asignaciones">Asignaciones</button>
+      </nav>
+    
+      <div class="sidebar-card">
+        <span class="muted">Sesión</span>
+        <strong id="sidebarUser">Sin usuario</strong>
+        <button class="btn btn-light btn-block" id="btnLogout" type="button">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="auth-view" id="authView">
+        <div class="auth-card">
+          <div class="auth-visual" aria-hidden="true">
+            <svg viewBox="0 0 460 260" role="img">
+              <path d="M32 179c89-26 153-48 273-100 26-11 65-19 89-3 17 12 10 32-15 37l-112 22-52 78-36 7 24-74-97 19-31 39-31 5 16-48-28-18z" fill="currentColor" opacity=".95"/>
+              <circle cx="82" cy="56" r="14" fill="currentColor" opacity=".2"/>
+              <circle cx="395" cy="207" r="24" fill="currentColor" opacity=".14"/>
+            </svg>
+          </div>
+          <div class="auth-content">
+            <span class="eyebrow">Sistema BOA</span>
+            <h1>Gestión de reclamos de equipaje</h1>
+            <p>Frontend independiente consumiendo servicios REST del backend Laravel 9.</p>
+                      <div class="manuales-descarga" style="margin: 20px; padding: 10px; background-color: #f4f4f4; border-radius: 5px;">
+              <p><strong>📖 Documentación del Sistema:</strong></p>
+              <a href="manuales_tecnico-usuario/MANUAL USUARIO PROGRAMACION WEB.pdf" download="Manual_Usuario.pdf" style="display: inline-block; margin-right: 15px; color: #007bff; text-decoration: none;">
+                  📥 Descargar Manual de Usuario
+              </a>
+              <a href="manuales_tecnico-usuario/MANUAL TECNICO PROGRAMACION WEB.pdf" download="Manual_Tecnico.pdf" style="display: inline-block; color: #007bff; text-decoration: none;">
+                  📥 Descargar Manual Técnico
+              </a>
+          </div>
+            <form class="form" id="loginForm">
+              <label>
+                Usuario
+                <input id="loginUser" type="text" autocomplete="username" value="admin" required>
+              </label>
+              <label>
+                Contraseña
+                <input id="loginPassword" type="password" autocomplete="current-password" value="admin123" required>
+              </label>
+              <button class="btn btn-primary btn-block" type="submit">Ingresar</button>
+            </form>
+
+            <details class="register-box">
+              <summary>Registrar nuevo encargado</summary>
+              <form class="form" id="registerForm">
+                <label>
+                  Usuario nuevo
+                  <input id="registerUser" type="text" autocomplete="username" minlength="3" required>
+                </label>
+                <label>
+                  Contraseña
+                  <input id="registerPassword" type="password" autocomplete="new-password" minlength="6" required>
+                </label>
+                <button class="btn btn-secondary btn-block" type="submit">Crear usuario</button>
+              </form>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace hidden" id="workspace">
+        <header class="topbar">
+          <div>
+            <span class="eyebrow">Panel operativo</span>
+            <h2 id="pageTitle">Resumen</h2>
+          </div>
+          <div class="topbar-actions">
+            <input id="globalSearch" class="search-input" type="search" placeholder="Buscar CI, reclamo, equipaje o vuelo">
+            <button class="btn btn-primary" id="btnGlobalSearch" type="button">Buscar</button>
+            <button class="btn btn-light" id="btnReload" type="button">Recargar</button>
+          </div>
+        </header>
+
+        <div class="alert hidden" id="alertBox" role="status" aria-live="polite"></div>
+
+        <section class="section is-active" id="section-dashboard">
+          <div class="hero-card">
+            <div>
+              <span class="eyebrow">Control de operaciones</span>
+              <h3>Seguimiento centralizado de equipajes</h3>
+              <p>Consulta reclamos, revisa vuelos y controla asignaciones de pilotos desde un cliente HTML, CSS y JavaScript puro.</p>
+            </div>
+            <div class="hero-plane" aria-hidden="true">✈</div>
+          </div>
+
+          <div class="stats-grid" id="statsGrid"></div>
+        </section>
+
+        <section class="section" id="section-clientes">
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <span class="eyebrow">Registro operativo</span>
+                <h3>Registrar cliente y asignar equipaje</h3>
+              </div>
+            </div>
+
+            <form class="form" id="clientLuggageForm">
+              <div class="form-grid">
+                <label>
+                  Nombre
+                  <input id="clientName" type="text" minlength="2" maxlength="100" required>
+                </label>
+
+                <label>
+                  Apellido paterno
+                  <input id="clientLastName" type="text" minlength="2" maxlength="100" required>
+                </label>
+
+                <label>
+                  Apellido materno
+                  <input id="clientSecondLastName" type="text" maxlength="100">
+                </label>
+
+                <label>
+                  CI
+                  <input id="clientCi" type="text" minlength="5" maxlength="20" required>
+                </label>
+
+                <label>
+                  Teléfono
+                  <input id="clientPhone" type="text" maxlength="20">
+                </label>
+
+                <label>
+                  Correo
+                  <input id="clientEmail" type="email" maxlength="100">
+                </label>
+
+                <label>
+                  Vuelo
+                  <select id="clientFlight" required></select>
+                </label>
+
+                <label>
+                  Precio boleto
+                  <input id="ticketPrice" type="number" min="0" step="0.01" value="580.50" required>
+                </label>
+
+                <label>
+                  Código equipaje
+                  <input id="luggageCode" type="text" maxlength="30" placeholder="EQ-XAMPP-011" required>
+                </label>
+
+                <label>
+                  Peso (kg)
+                  <input id="luggageWeight" type="number" min="0.1" max="99.99" step="0.01" required>
+                </label>
+
+                <label>
+                  Tipo
+                  <select id="luggageType" required>
+                    <option value="">Seleccione tipo</option>
+                    <option value="Maleta">Maleta</option>
+                    <option value="Mochila">Mochila</option>
+                    <option value="Bolso">Bolso</option>
+                    <option value="Caja">Caja</option>
+                  </select>
+                </label>
+              </div>
+
+              <label>
+                Descripción del equipaje
+                <textarea id="luggageDescription" rows="3" maxlength="200"></textarea>
+              </label>
+
+              <button class="btn btn-primary btn-block" type="submit">
+                Registrar cliente y equipaje
+              </button>
+            </form>
+          </article>
+        </section>
+
+        <section class="section" id="section-reclamos">
+          <div class="content-grid two-columns">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <span class="eyebrow">Nuevo caso</span>
+                  <h3>Registrar reclamo</h3>
+                </div>
+              </div>
+              <form class="form" id="claimForm">
+                <label>
+                  Equipaje disponible
+                  <select id="claimLuggage" required></select>
+                </label>
+                <label>
+                  Tipo de reclamo
+                  <select id="claimType" required></select>
+                </label>
+                <label>
+                  Descripción
+                  <textarea id="claimDescription" rows="4" required>Equipaje no apareció en la cinta transportadora.</textarea>
+                </label>
+                <button class="btn btn-primary btn-block" type="submit">Crear reclamo</button>
+              </form>
+            </article>
+
+            <article class="card soft-card">
+              <span class="eyebrow">Reglas activas</span>
+              <ul class="rule-list">
+                <li>Un equipaje solo puede tener un reclamo activo.</li>
+                <li>El estado inicial se registra como pendiente.</li>
+                <li>Todo cambio de estado genera seguimiento.</li>
+                <li>Un reclamo cerrado ya no puede modificarse.</li>
+              </ul>
+            </article>
+          </div>
+
+          <article class="card table-card">
+            <div class="card-header">
+              <div>
+                <span class="eyebrow">Casos registrados</span>
+                <h3>Reclamos</h3>
+              </div>
+              <span class="pill" id="claimCount">0 registros</span>
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Estado</th>
+                    <th>Equipaje</th>
+                    <th>Pasajero</th>
+                    <th>Vuelo</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="claimsTable"></tbody>
+              </table>
+            </div>
+            <div class="pagination-container" id="claimsPagination"></div>
+          </article>
+        </section>
+
+        <section class="section" id="section-manage-claim">
+          <article class="card detail-card">
+            <div class="card-header">
+              <div>
+                <span class="eyebrow">Gestión de reclamo</span>
+                <h3 id="manageCode">Detalle del caso</h3>
+              </div>
+              <button class="btn btn-light" id="btnBackClaims" type="button">Volver</button>
+            </div>
+
+            <div class="detail-grid" id="claimDetail"></div>
+
+            <div class="content-grid two-columns manage-grid">
+              <form class="form card compact-card" id="statusForm">
+                <h4>Actualizar estado</h4>
+                <input id="statusClaimId" type="hidden">
+                <label>
+                  Estado nuevo
+                  <select id="statusNew" required></select>
+                </label>
+                <label>
+                  Observaciones
+                  <textarea id="statusNotes" rows="4" required>Se actualiza el seguimiento operativo del caso.</textarea>
+                </label>
+                <button class="btn btn-primary btn-block" type="submit">Actualizar estado</button>
+              </form>
+
+              <div class="card compact-card">
+                <h4>Historial</h4>
+                <div class="timeline" id="trackingList"></div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="section" id="section-vuelos">
+          <article class="card table-card">
+            <div class="card-header">
+              <div>
+                <span class="eyebrow">Operación aérea</span>
+                <h3>Vuelos programados</h3>
+              </div>
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Ruta</th>
+                    <th>Fecha</th>
+                    <th>Horario</th>
+                    <th>Avión</th>
+                    <th>Pilotos</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="flightsTable"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section class="section" id="section-pilotos">
+          <article class="card table-card">
+            <div class="card-header">
+              <div>
+                <span class="eyebrow">Tripulación</span>
+                <h3>Pilotos</h3>
+              </div>
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Licencia</th>
+                    <th>Teléfono</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="pilotsTable"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section class="section" id="section-asignaciones">
+          <div class="content-grid two-columns">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <span class="eyebrow">Planificación</span>
+                  <h3>Asignar piloto a vuelo</h3>
+                </div>
+              </div>
+              <form class="form" id="assignmentForm">
+                <label>
+                  Vuelo
+                  <select id="assignmentFlight" required></select>
+                </label>
+                <label>
+                  Piloto
+                  <select id="assignmentPilot" required></select>
+                </label>
+                <label>
+                  Rol en vuelo
+                  <select id="assignmentRole" required>
+                    <option value="CAPITAN">Capitán</option>
+                    <option value="COPILOTO">Copiloto</option>
+                    <option value="RESERVA">Reserva</option>
+                  </select>
+                </label>
+                <button class="btn btn-primary btn-block" type="submit">Guardar asignación</button>
+              </form>
+            </article>
+
+            <article class="card table-card">
+              <div class="card-header">
+                <div>
+                  <span class="eyebrow">Asignaciones actuales</span>
+                  <h3>Tripulación por vuelo</h3>
+                </div>
+              </div>
+              <div class="table-wrapper small-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Vuelo</th>
+                      <th>Piloto</th>
+                      <th>Rol</th>
+                    </tr>
+                  </thead>
+                  <tbody id="assignmentsTable"></tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
